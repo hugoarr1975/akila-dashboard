@@ -83,65 +83,33 @@ c8.metric(
     f"${metrics['inventario']:,.0f}"
 )
 
-st.divider()
-
 # --------------------------------------------------
+
+st.divider()
 
 col1,col2 = st.columns(2)
 
 with col1:
 
     st.plotly_chart(
-        plot_sales_week(df),
+        plot_inventory(df),
         use_container_width=True
     )
 
 with col2:
 
     st.plotly_chart(
-        plot_sales_type(df),
+        plot_sales_share(df),
         use_container_width=True
     )
-
-# --------------------------------------------------
-
-col3,col4 = st.columns(2)
-
-with col3:
-
-    st.plotly_chart(
-        plot_payment_method(df),
-        use_container_width=True
-    )
-
-with col4:
-
-    st.plotly_chart(
-        plot_sales_tower(df),
-        use_container_width=True
-    )
-
-# --------------------------------------------------
 
 st.plotly_chart(
-    plot_price_type(df),
+    plot_price_m2(df),
     use_container_width=True
 )
 
-# --------------------------------------------------
-
-st.subheader("Resumen Ejecutivo")
-
-summary = generate_summary(metrics)
-
-st.info(summary)
-
-# --------------------------------------------------
-
-st.subheader("Detalle")
-
-st.dataframe(
-    df,
+st.plotly_chart(
+    plot_heatmap(df),
     use_container_width=True
 )
 
