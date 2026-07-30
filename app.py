@@ -1,16 +1,9 @@
 import streamlit as st
 import pandas as pd
-
 from src.loader import load_data
 from src.filters import sidebar_filters
 from src.metrics import calculate_metrics
-from src.charts import (
-    plot_sales_week,
-    plot_sales_type,
-    plot_payment_method,
-    plot_sales_tower,
-    plot_price_type
-)
+from src.charts import *
 from src.styles import load_css
 from src.export import download_excel
 from src.ai_summary import generate_summary
