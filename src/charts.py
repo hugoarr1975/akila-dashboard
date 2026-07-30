@@ -1,132 +1,293 @@
+import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
-def sales_per_week(df):
 
-    vendidos = df[df.estado=="Vendido"].copy()
+COLOR_AKILA = "#0B5394"
+COLOR_GREEN = "#2E8B57"
+COLOR_RED = "#C0392B"
 
-    vendidos["Semana"] = vendidos["fecha_venta"].dt.to_period("W").astype(str)
 
-    resumen = vendidos.groupby("Semana").size().reset_index(name="Ventas")
+# ==========================================================
+# VENTAS POR SEMANA
+# ==========================================================
+
+def plot_sales_week(df):
+
+    vendidos = df[df["estado"] == "Vendido"].copy()
+
+    if vendidos.empty:
+        return go.Figure()
+
+    ventas = (
+        vendidos
+        .groupby("Semana")
+        .agg(
+            Cantidad=("apartamento", "count"),
+            Valor=("precio_cop", "sum")
+        )
+        .reset_index()
+    )
 
     fig = px.line(
-
-        resumen,
-
+        ventas,
         x="Semana",
-
-        y="Ventas",
-
+        y="Cantidad",
         markers=True,
+        text="Cantidad",
+        title="Ventas por Semana"
+    )
 
-        title="Ventas por semana"
+    fig.update_traces(
+        line=dict(width=4),
+        marker=dict(size=10)
+    )
 
+    fig.update_layout(
+        template="plotly_white",
+        height=420,
+        title_x=.02
     )
 
     return fig
 
 
-def sales_by_type(df):
+# ==========================================================
+# VENTAS POR TIPO
+# ==========================================================
 
-    vendidos = df[df.estado=="Vendido"]
+def plot_sales_type(df):
 
-    resumen = vendidos.groupby(
+    vendidos = df[df["estado"] == "Vendido"]
 
-        "tipo_apartamento"
-
-    ).size().reset_index(name="Cantidad")
+    resumen = (
+        vendidos
+        .groupby("tipo_apartamento")
+        .size()
+        .reset_index(name="Cantidad")
+        .sort_values("Cantidad")
+    )
 
     fig = px.bar(
-
         resumen,
-
-        x="tipo_apartamento",
-
-        y="Cantidad",
-
+        x="Cantidad",
+        y="tipo_apartamento",
+        orientation="h",
         color="Cantidad",
+        title="Tipos de Apartamentos Vendidos"
+    )
 
-        title="Ventas por tipo"
-
+    fig.update_layout(
+        template="plotly_white",
+        height=420
     )
 
     return fig
 
-def payment_method(df):
 
-    vendidos = df[df.estado=="Vendido"]
+# ==========================================================
+# PARTICIPACIÓN
+# ==========================================================
 
-    resumen = vendidos.groupby(
+def plot_sales_share(df):
 
-        "forma_pago"
+    vendidos = df[df["estado"] == "Vendido"]
 
-    ).size().reset_index(name="Cantidad")
+    resumen = (
+        vendidos
+        .groupby("tipo_apartamento")
+        .size()
+        .reset_index(name="Cantidad")
+    )
 
     fig = px.pie(
-
         resumen,
-
-        names="forma_pago",
-
         values="Cantidad",
+        names="tipo_apartamento",
+        hole=.55,
+        title="Participación por Tipo"
+    )
 
+    fig.update_layout(height=420)
+
+    return fig
+
+
+# ==========================================================
+# FORMA DE PAGO
+# ==========================================================
+
+def plot_payment_method(df):
+
+    vendidos = df[df["estado"] == "Vendido"]
+
+    resumen = (
+        vendidos
+        .groupby("forma_pago")
+        .size()
+        .reset_index(name="Cantidad")
+    )
+
+    fig = px.pie(
+        resumen,
+        names="forma_pago",
+        values="Cantidad",
         hole=.45,
-
-        title="Forma de pago"
-
+        title="Forma de Pago"
     )
+
+    fig.update_layout(height=420)
 
     return fig
 
-def tower_sales(df):
 
-    vendidos = df[df.estado=="Vendido"]
+# ==========================================================
+# TORRES
+# ==========================================================
 
-    resumen = vendidos.groupby(
+def plot_sales_tower(df):
 
-        "torre"
+    vendidos = df[df["estado"] == "Vendido"]
 
-    ).size().reset_index(name="Ventas")
+    resumen = (
+        vendidos
+        .groupby("torre")
+        .size()
+        .reset_index(name="Ventas")
+    )
 
     fig = px.bar(
-
         resumen,
-
         x="torre",
-
         y="Ventas",
-
         color="Ventas",
+        title="Ventas por Torre"
+    )
 
-        title="Ventas por torre"
-
+    fig.update_layout(
+        template="plotly_white",
+        height=420
     )
 
     return fig
 
 
-def average_price(df):
+# ==========================================================
+# INVENTARIO
+# ==========================================================
 
-    vendidos = df[df.estado=="Vendido"]
+def plot_inventory(df):
 
-    resumen = vendidos.groupby(
+    disponibles = df[df["estado"] == "Disponible"]
 
-        "tipo_apartamento"
-
-    )["precio_cop"].mean().reset_index()
+    resumen = (
+        disponibles
+        .groupby("torre")
+        .size()
+        .reset_index(name="Disponibles")
+    )
 
     fig = px.bar(
-
         resumen,
+        x="torre",
+        y="Disponibles",
+        color="Disponibles",
+        title="Inventario Disponible"
+    )
 
+    fig.update_layout(height=420)
+
+    return fig
+
+
+# ==========================================================
+# PRECIO PROMEDIO
+# ==========================================================
+
+def plot_price_type(df):
+
+    vendidos = df[df["estado"] == "Vendido"]
+
+    resumen = (
+        vendidos
+        .groupby("tipo_apartamento")["precio_cop"]
+        .mean()
+        .reset_index()
+    )
+
+    fig = px.bar(
+        resumen,
         x="tipo_apartamento",
-
         y="precio_cop",
-
         color="precio_cop",
+        title="Precio Promedio por Tipo"
+    )
 
-        title="Precio promedio"
-
+    fig.update_layout(
+        template="plotly_white",
+        height=420
     )
 
     return fig
 
+
+# ==========================================================
+# PRECIO POR M²
+# ==========================================================
+
+def plot_price_m2(df):
+
+    vendidos = df[df["estado"] == "Vendido"].copy()
+
+    vendidos["precio_m2"] = (
+        vendidos["precio_cop"] /
+        vendidos["area_m2"]
+    )
+
+    resumen = (
+        vendidos
+        .groupby("tipo_apartamento")["precio_m2"]
+        .mean()
+        .reset_index()
+    )
+
+    fig = px.bar(
+        resumen,
+        x="tipo_apartamento",
+        y="precio_m2",
+        color="precio_m2",
+        title="Precio Promedio por m²"
+    )
+
+    fig.update_layout(height=420)
+
+    return fig
+
+
+# ==========================================================
+# HEATMAP
+# ==========================================================
+
+def plot_heatmap(df):
+
+    vendidos = df[df["estado"] == "Vendido"]
+
+    tabla = pd.pivot_table(
+        vendidos,
+        values="apartamento",
+        index="piso",
+        columns="torre",
+        aggfunc="count",
+        fill_value=0
+    )
+
+    fig = px.imshow(
+        tabla,
+        aspect="auto",
+        text_auto=True,
+        title="Mapa de Calor de Ventas"
+    )
+
+    fig.update_layout(height=500)
+
+    return fig
