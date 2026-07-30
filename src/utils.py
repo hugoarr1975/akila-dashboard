@@ -1,0 +1,7 @@
+currency()
+
+percent()
+
+number()
+
+date()
