@@ -1,7 +1,0 @@
-currency()
-
-percent()
-
-number()
-
-date()
