@@ -11,13 +11,25 @@ Este dashboard permite a la dirección de Akila visualizar en tiempo real:
 - **📈 Ventas por Semana:** Evolución temporal de unidades vendidas y valor acumulado por semana.
 - **🏠 Tipos de Apartamento Vendidos:** Tabla con unidades, % sobre ventas, valor total, precio y área promedio por tipo. Incluye gráfico de dona.
 - **🏢 Disponibles vs Vendidos por Torre:** Inventario restante por tipo de apartamento y valor vendido por torre.
-- **💰 Análisis Financiero:** Distribución de forma de pago (contado vs crédito), boxplot de precios por tipo y timeline de entregas.
+- **💰 Análisis Financiero:** Distribución de forma de pago (contado vs crédito).
 - **📋 Inventario Detallado:** Tabla filtrable con todos los apartamentos, estados, fechas y montos.
 
-## 🚀 Cómo ejecutar
+## 🚀 ¿Cómo ejecutar?
 
 ### 1. Clonar el repositorio
 
 ```bash
 git clone https://github.com/hugoarr1975/akila-dashboard.git
 cd akila-dashboard
+
+```bash
+python -m venv venv
+
+```bash
+venv\Scripts\activate
+
+```bash
+pip install -r requirements.txt
+
+```bash
+streamlit run app.py
